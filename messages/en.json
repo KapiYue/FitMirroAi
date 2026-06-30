@@ -224,6 +224,7 @@
       "forgotPassword": "Forgot Password?",
       "signInWithGoogle": "Sign In with Google",
       "signInWithGitHub": "Sign In with GitHub",
+      "socialLoginError": "Social login failed. Please try again or check the provider configuration.",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
       "or": "Or continue with",

@@ -12,10 +12,47 @@ import { Loader2Icon } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface SocialLoginButtonProps {
   callbackUrl?: string;
   showDivider?: boolean;
+}
+
+function getSocialLoginError(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return {
+      raw: error,
+    };
+  }
+
+  const errorRecord = error as Record<string, unknown>;
+  const nestedError =
+    errorRecord.error && typeof errorRecord.error === 'object'
+      ? (errorRecord.error as Record<string, unknown>)
+      : undefined;
+
+  return {
+    message:
+      typeof errorRecord.message === 'string'
+        ? errorRecord.message
+        : typeof nestedError?.message === 'string'
+          ? nestedError.message
+          : undefined,
+    code:
+      typeof errorRecord.code === 'string'
+        ? errorRecord.code
+        : typeof nestedError?.code === 'string'
+          ? nestedError.code
+          : undefined,
+    status:
+      typeof errorRecord.status === 'number' ? errorRecord.status : undefined,
+    statusText:
+      typeof errorRecord.statusText === 'string'
+        ? errorRecord.statusText
+        : undefined,
+    raw: error,
+  };
 }
 
 /**
@@ -83,7 +120,9 @@ export const SocialLoginButton = ({
           setIsLoading(null);
         },
         onError: (ctx) => {
-          console.error('social login error', ctx.error.message);
+          const error = getSocialLoginError(ctx.error);
+          console.error('social login error', error);
+          toast.error(error.message || t('socialLoginError'));
           setIsLoading(null);
         },
       }
